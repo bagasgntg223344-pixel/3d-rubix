@@ -20,7 +20,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: rgba(0,0,0,0.85);
+      background: rgba(0,0,0,0.9);
       z-index: 2;
       text-align: center;
       transition: opacity 1s ease;
@@ -59,12 +59,15 @@
     <button onclick="startGame('medium')">Medium</button>
     <button onclick="startGame('hard')">Hard</button>
   </div>
+
+  <!-- Musik dan efek suara -->
   <audio id="bgMusic" loop>
     <source src="https://cdn.pixabay.com/audio/2021/10/20/audio_438bd1a42d.mp3" type="audio/mpeg">
   </audio>
   <audio id="rotateSound">
     <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2938e89d1a.mp3?filename=click-124467.mp3" type="audio/mpeg">
   </audio>
+
   <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/controls/OrbitControls.js"></script>
   <script>
@@ -84,20 +87,36 @@
       renderer = new THREE.WebGLRenderer({antialias: true});
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
+
+      // Tambahkan pencahayaan agar warna terlihat
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      scene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(3, 3, 5);
+      scene.add(directionalLight);
+
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.1;
 
-      const cubeSize = 1;
+      const cubeSize = 0.95;
       const spacing = 0.05;
-      const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff8800, 0xffffff];
 
+      const faceColors = [
+        0xff0000, // merah
+        0x00ff00, // hijau
+        0x0000ff, // biru
+        0xffff00, // kuning
+        0xff8800, // oranye
+        0xffffff  // putih
+      ];
+
+      // Buat 27 kubus kecil
       for (let x = -1; x <= 1; x++) {
         for (let y = -1; y <= 1; y++) {
           for (let z = -1; z <= 1; z++) {
-            const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-            const materials = colors.map(c => new THREE.MeshBasicMaterial({color: c}));
-            const cube = new THREE.Mesh(geometry, materials);
+            const materials = faceColors.map(c => new THREE.MeshStandardMaterial({ color: c }));
+            const cube = new THREE.Mesh(new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize), materials);
             cube.position.set(x * (cubeSize + spacing), y * (cubeSize + spacing), z * (cubeSize + spacing));
             scene.add(cube);
             cubes.push(cube);
@@ -105,29 +124,32 @@
         }
       }
 
-      camera.position.z = 6;
-
+      camera.position.set(3, 3, 5);
       window.addEventListener('click', rotateRandomFace);
       window.addEventListener('resize', onWindowResize);
     }
 
+    // Fungsi rotasi dengan animasi
     function rotateRandomFace() {
       if (rotating) return;
       rotating = true;
+
       const sound = document.getElementById('rotateSound');
       sound.currentTime = 0;
       sound.play();
-      const axis = new THREE.Vector3(0, 1, 0);
-      const group = new THREE.Group();
 
+      const group = new THREE.Group();
+      const layerY = Math.floor(Math.random() * 3) - 1; // pilih layer random
       cubes.forEach(cube => {
-        if (Math.abs(cube.position.y - 1.05) < 0.5) group.add(cube);
+        if (Math.abs(cube.position.y - (layerY * 1.0)) < 0.6) group.add(cube);
       });
 
       scene.add(group);
+
       let angle = 0;
+      const rotateSpeed = 0.1;
       const rotateAnim = () => {
-        angle += 0.1;
+        angle += rotateSpeed;
         group.rotation.y = angle;
         if (angle < Math.PI / 2) {
           requestAnimationFrame(rotateAnim);
@@ -152,4 +174,3 @@
   </script>
 </body>
 </html>
-
