@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Varzeta Game - 3D Rubik's Cube</title>
   <style>
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
       background: radial-gradient(circle at top, #1e1e2f, #121212);
-      color: white;
       overflow: hidden;
+      color: white;
     }
     #menu {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: rgba(0,0,0,0.9);
-      z-index: 2;
-      text-align: center;
+      z-index: 10;
       transition: opacity 1s ease;
     }
     h1 {
@@ -45,9 +46,6 @@
     button:hover {
       transform: scale(1.1);
       box-shadow: 0 0 20px #00ffcc;
-    }
-    canvas {
-      display: block;
     }
   </style>
 </head>
@@ -74,90 +72,123 @@
     let scene, camera, renderer, controls, cubes = [], rotating = false;
 
     function startGame(level) {
-      document.getElementById('menu').style.opacity = '0';
-      setTimeout(() => document.getElementById('menu').style.display = 'none', 1000);
-      document.getElementById('bgMusic').play();
+      document.getElementById("menu").style.opacity = "0";
+      setTimeout(() => (document.getElementById("menu").style.display = "none"), 1000);
+
+      const bgMusic = document.getElementById("bgMusic");
+      bgMusic.volume = 0.4;
+      bgMusic.play();
+
       init(level);
       animate();
     }
 
     function init(level) {
       scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-      renderer = new THREE.WebGLRenderer({antialias: true});
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(renderer.domElement);
 
-      // Tambahkan pencahayaan agar warna terlihat
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-      scene.add(ambientLight);
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      directionalLight.position.set(3, 3, 5);
-      scene.add(directionalLight);
+      camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.set(4, 4, 6);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x111122);
+      document.body.appendChild(renderer.domElement);
 
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.1;
 
-      const cubeSize = 0.95;
-      const spacing = 0.05;
+      // Tambahkan cahaya
+      const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+      scene.add(ambient);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+      dirLight.position.set(5, 5, 5);
+      scene.add(dirLight);
 
+      createRubiksCube();
+      window.addEventListener("click", rotateRandomFace);
+      window.addEventListener("resize", onWindowResize);
+    }
+
+    function createRubiksCube() {
+      const cubeSize = 0.9;
+      const spacing = 0.05;
       const faceColors = [
-        0xff0000, // merah
-        0x00ff00, // hijau
-        0x0000ff, // biru
-        0xffff00, // kuning
-        0xff8800, // oranye
-        0xffffff  // putih
+        0xff0000, // red
+        0x00ff00, // green
+        0x0000ff, // blue
+        0xffff00, // yellow
+        0xff8800, // orange
+        0xffffff, // white
       ];
 
-      // Buat 27 kubus kecil
+      cubes = [];
+
       for (let x = -1; x <= 1; x++) {
         for (let y = -1; y <= 1; y++) {
           for (let z = -1; z <= 1; z++) {
-            const materials = faceColors.map(c => new THREE.MeshStandardMaterial({ color: c }));
-            const cube = new THREE.Mesh(new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize), materials);
-            cube.position.set(x * (cubeSize + spacing), y * (cubeSize + spacing), z * (cubeSize + spacing));
+            const materials = faceColors.map(
+              (color) =>
+                new THREE.MeshStandardMaterial({
+                  color,
+                  roughness: 0.4,
+                  metalness: 0.2,
+                })
+            );
+            const cube = new THREE.Mesh(
+              new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize),
+              materials
+            );
+            cube.position.set(
+              x * (cubeSize + spacing),
+              y * (cubeSize + spacing),
+              z * (cubeSize + spacing)
+            );
             scene.add(cube);
             cubes.push(cube);
           }
         }
       }
-
-      camera.position.set(3, 3, 5);
-      window.addEventListener('click', rotateRandomFace);
-      window.addEventListener('resize', onWindowResize);
     }
 
-    // Fungsi rotasi dengan animasi
     function rotateRandomFace() {
       if (rotating) return;
       rotating = true;
 
-      const sound = document.getElementById('rotateSound');
-      sound.currentTime = 0;
-      sound.play();
+      const rotateSound = document.getElementById("rotateSound");
+      rotateSound.currentTime = 0;
+      rotateSound.play();
 
+      const randomLayer = Math.floor(Math.random() * 3) - 1;
       const group = new THREE.Group();
-      const layerY = Math.floor(Math.random() * 3) - 1; // pilih layer random
-      cubes.forEach(cube => {
-        if (Math.abs(cube.position.y - (layerY * 1.0)) < 0.6) group.add(cube);
+
+      cubes.forEach((cube) => {
+        if (Math.abs(cube.position.y - randomLayer) < 0.6) {
+          group.add(cube);
+        }
       });
 
       scene.add(group);
 
       let angle = 0;
-      const rotateSpeed = 0.1;
-      const rotateAnim = () => {
+      const rotateSpeed = 0.12;
+      const axis = new THREE.Vector3(0, 1, 0);
+
+      function animateRotation() {
         angle += rotateSpeed;
-        group.rotation.y = angle;
+        group.rotateOnAxis(axis, rotateSpeed);
         if (angle < Math.PI / 2) {
-          requestAnimationFrame(rotateAnim);
+          requestAnimationFrame(animateRotation);
         } else {
           rotating = false;
         }
-      };
-      rotateAnim();
+      }
+      animateRotation();
     }
 
     function onWindowResize() {
@@ -174,3 +205,4 @@
   </script>
 </body>
 </html>
+
