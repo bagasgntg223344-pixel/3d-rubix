@@ -1,39 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Varzeta Game - 3D Rubik's Cube</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/controls/OrbitControls.js"></script>
+    <meta charset="UTF-8">
+    <title>Varzeta Game - 3D Rubik's Cube</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Menu awal -->
-  <div id="menu">
-    <h1>🌀 Varzeta Cube</h1>
-    <p>Pilih tingkat kesulitan untuk memulai permainan!</p>
-    <button onclick="startGame('easy')">Easy</button>
-    <button onclick="startGame('medium')">Medium</button>
-    <button onclick="startGame('hard')">Hard</button>
-  </div>
 
-  <!-- Tombol kontrol saat bermain -->
-  <div id="controls">
-    <button id="shuffleBtn">🔀 Shuffle</button>
-    <button id="resetBtn">♻️ Reset</button>
-    <button id="fullscreenBtn">⛶ Fullscreen</button>
-  </div>
+    <div id="ui-panel">
+        <h1>🌀 Varzeta Cube</h1>
+        <p>Pilih tingkat kesulitan untuk memulai permainan!</p>
+        
+        <div id="difficulty-controls">
+            <button id="btn-easy">Easy (2x2)</button>
+            <button id="btn-medium">Medium (3x3)</button>
+            <button id="btn-hard">Hard (4x4)</button>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-  <!-- Audio -->
-  <audio id="bgMusic" loop>
-    <source src="https://cdn.pixabay.com/audio/2021/10/20/audio_438bd1a42d.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="rotateSound">
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2938e89d1a.mp3?filename=click-124467.mp3" type="audio/mpeg">
-  </audio>
+    <script src="script.js"></script>
 
-  <script src="script.js"></script>
 </body>
 </html>
 
