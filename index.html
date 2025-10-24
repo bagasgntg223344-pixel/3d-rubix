@@ -1,33 +1,105 @@
+
 <!DOCTYPE html>
+
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
+
     <title>Varzeta Game - 3D Rubik's Cube</title>
-    
+
+   
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
+
     <link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
 
+
     <div id="ui-panel">
+
         <h1>🌀 Varzeta Cube</h1>
+
         <p>Pilih tingkat kesulitan untuk memulai permainan!</p>
-        
+
+       
+
         <div id="difficulty-controls">
+
             <button id="btn-easy">Easy (2x2)</button>
+
             <button id="btn-medium">Medium (3x3)</button>
+
             <button id="btn-hard">Hard (4x4)</button>
+
         </div>
-    </div>
-    
+
+
+        <hr class="divider">
+
+        <div id="game-controls">
+
+            <button id="btn-shuffle">🔀 Acak (Shuffle)</button>
+
+            <button id="btn-reset">♻️ Atur Ulang (Reset)</button>
+
+        </div>
+
+       
+
+        <hr class="divider">
+
+       
+
+        <h3>Cara Menggunakan:</h3>
+
+       
+
+        <ul class="instructions-list">
+
+            <li><strong>Pilih Kesulitan:</strong> Klik 'Easy', 'Medium', atau 'Hard' untuk membuat kubus baru.</li>
+
+            <li><strong>Acak Kubus:</strong> Klik 'Acak' untuk mengacak kubus yang ada.</li>
+
+            <li><strong>Atur Ulang:</strong> Klik 'Atur Ulang' untuk mengembalikan kubus ke kondisi awal (terpecahkan).</li>
+
+            <li><strong>Kontrol Kamera:</strong>
+
+                <ul>
+
+                    <li><strong>Klik Kiri + Geser:</strong> Memutar kamera.</li>
+
+                    <li><strong>Scroll Mouse:</strong> Zoom in dan Zoom out.</li>
+
+                    <li><strong>Klik Kanan + Geser:</strong> Menggeser kamera.</li>
+
+                </ul>
+
+            </li>
+
+        </ul>
+
+        </div>
+
+   
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
 
     <script src="script.js"></script>
 
-</body>
-</html>
 
+</body>
+
+</html>
